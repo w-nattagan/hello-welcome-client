@@ -1,0 +1,39 @@
+#title {
+    color: #ee3c3c !important;
+  }
+  
+  .css-1fu2e3p-MuiPaper-root-MuiDialog-paper {
+    border-radius: 20px !important;
+    padding: 12px 20px !important;
+  }
+  
+  .text-box {
+    color: #ababab;
+  }
+  
+  .delete-cancel {
+    color: #ee3c3c !important;
+    background-color: #ee3c3c33 !important;
+    padding: 5px 15px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+  }
+  
+  #delete-user-button {
+    color: rgba(255, 81, 65, 0.81);
+    text-align: center;
+    font-family: Raleway;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 150%; /* 24px */
+  }
+  
+  .delete-confirm {
+    color: #ffff !important;
+    background-color: #ee3c3c !important;
+    padding: 5px 15px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+  }
+  

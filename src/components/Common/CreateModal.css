@@ -1,0 +1,53 @@
+#customized-dialog-title {
+    padding: 2 !important;
+    color: #7b7b7b !important;
+    border-bottom: 1px solid #f5f5f5
+}
+
+.text-field-one {
+    width: 250px;
+    padding-top: 4px;
+
+    & .MuiInputBase-root {
+        height: 48px;
+        padding: 12px;
+    }
+}
+
+.text-field-two {
+    width: 150px;
+    padding-top: 4px;
+
+    & .MuiInputBase-root {
+        height: 48px;
+        padding: 12px;
+    }
+}
+
+.box-input {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+}
+
+.dialog-container {
+    & .MuiPaper-root {
+        border-radius: 15px;
+    }
+}
+
+.submit-button {
+    color: rgba(255, 81, 65, 0.81)!important;
+    background-color: #f5f5f5 !important;
+    width: 20% !important;
+    margin-bottom: 10px !important;
+}
+
+.text-field-one fieldset {
+    border-radius: 10px;
+}
+
+.text-field-two fieldset {
+    border-radius: 10px;
+}
+
