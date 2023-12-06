@@ -52,10 +52,11 @@
 }
 
 .text-field-multi {
-    width: 100%;
+    width: 500px;
     margin-top: 8px;
 }
 
 .text-field-multi textarea {
     resize: vertical;
+    width: 500px;
 }

@@ -11,7 +11,7 @@ interface CustomSnackbarProps {
 const CustomSnackbar: React.FC<CustomSnackbarProps> = ({
     open,
     message = "Default message",
-    autoHideDuration = 5000,
+    autoHideDuration = 3000,
     onClose,
 }) => {
     return (

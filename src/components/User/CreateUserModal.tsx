@@ -78,6 +78,53 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onSuccess }) => {
     }));
   };
 
+  const isEmailValid = (email: string) => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value: string = e.target.value;
+    handleInputChange("email", value);
+  };
+
+  const isNumber = (value: string) => /^-?\d*\.?\d*$/.test(value);
+
+  const handleLatitudeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value: string = e.target.value;
+    if (
+      isNumber(value) ||
+      value === "" ||
+      (value.startsWith("-") && isNumber(value.substring(1)))
+    ) {
+      handleInputChange("address", {
+        ...formData.address,
+        geo: {
+          ...formData.address.geo,
+          lat: value,
+        },
+      });
+    }
+  };
+
+  const handleLongitudeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value: string = e.target.value;
+    if (
+      isNumber(value) ||
+      value === "" ||
+      (value.startsWith("-") && isNumber(value.substring(1)))
+    ) {
+      handleInputChange("address", {
+        ...formData.address,
+        geo: {
+          ...formData.address.geo,
+          lng: value,
+        },
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     try {
       const response: any = await fetchApi("/users", "post", formData);
@@ -138,7 +185,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onSuccess }) => {
             </Box>
             <Box>
               <TextField
-                className="text-field-two"
+                className="text-field-one"
                 label="Phone Number"
                 id="outlined-basic"
                 variant="outlined"
@@ -161,13 +208,20 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onSuccess }) => {
               /></Box>
             <Box>
               <TextField
-                className="text-field-two"
+                className="text-field-one"
                 label="Email"
                 variant="outlined"
                 required
                 value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
+                onChange={handleEmailChange}
+                error={!isEmailValid(formData.email)}
+                helperText={
+                  !isEmailValid(formData.email)
+                    ? "Please enter a valid email address"
+                    : null
+                }
               />
+
             </Box>
           </Box>
           <Box className="box-input">
@@ -229,7 +283,7 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onSuccess }) => {
             </Box>
             <Box>
               <TextField
-                className="text-field-two"
+                className="text-field-one"
                 label="Zip code"
                 id="outlined-basic"
                 variant="outlined"
@@ -239,6 +293,28 @@ const CreateUserModal: React.FC<CreateUserModalProps> = ({ onSuccess }) => {
                   ...formData.address,
                   zipcode: e.target.value,
                 })}
+              />
+            </Box>
+          </Box>
+          <Box className="box-input">
+            <Box>
+              <TextField
+                className="text-field-one"
+                label="Latitude"
+                variant="outlined"
+                required
+                value={formData.address.geo.lat}
+                onChange={handleLatitudeChange}
+              />
+            </Box>
+            <Box>
+              <TextField
+                className="text-field-one"
+                label="Longitude"
+                variant="outlined"
+                required
+                value={formData.address.geo.lng}
+                onChange={handleLongitudeChange}
               />
             </Box>
           </Box>

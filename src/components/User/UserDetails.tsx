@@ -127,6 +127,18 @@ const UserDetails: React.FC<UserDetailsProps> = ({ selectedUser, onDeleteSuccess
                             <Typography className="Content">{selectedUser.address.zipcode}</Typography>
                         </Item>
                     </Grid>
+                    <Grid item xs={6} md={3}>
+                        <Item>
+                            <Typography className="Topic">Latitude :</Typography>
+                            <Typography className="Content">{selectedUser.address.geo.lat}</Typography>
+                        </Item>
+                    </Grid>
+                    <Grid item xs={6} md={3}>
+                        <Item>
+                            <Typography className="Topic">Longitude :</Typography>
+                            <Typography className="Content">{selectedUser.address.geo.lng}</Typography>
+                        </Item>
+                    </Grid>
                 </Grid>
                 <Typography className="address">Company</Typography>
                 <Grid container>

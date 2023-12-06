@@ -108,12 +108,14 @@ const CreatePost: React.FC<CreateModalProps> = ({ onSuccess }) => {
             <Box>
               <Typography>Title</Typography>
               <TextField
-                className="text-field-one"
+                className="text-field-multi"
                 label="Title"
                 id="title"
                 name="title"
                 variant="outlined"
+                required
                 onChange={handleInputChange}
+                inputProps={{ maxLength: 100 }}
               />
             </Box>
           </Box>
@@ -121,14 +123,16 @@ const CreatePost: React.FC<CreateModalProps> = ({ onSuccess }) => {
             <Box>
               <Typography>Content</Typography>
               <TextField
-                className=""
+                className="text-field-multi"
                 label="Content"
                 id="content"
                 name="content"
                 variant="outlined"
                 multiline
-                rows={4}
+                rows={7}
+                required
                 onChange={handleInputChange}
+                inputProps={{ maxLength: 1000 }}
               />
             </Box>
           </Box>
