@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Typography, Avatar, Grid, Stack } from "@mui/material";
 import { deepPurple } from "@mui/material/colors";
 import { styled } from "@mui/system";
-import DeleteConfirmation from "../Common/DeleteConfirmation";
+import DeleteConfirmation from "./DeleteUserConfirmation";
+import CustomSnackbar from "../Common/CustomSnackbar";
 
 const Item = styled("div")(({ theme }) => ({
     margin: theme.spacing(1),
@@ -34,9 +35,24 @@ interface UserDetailsProps {
             bs: string;
         };
     };
+    onDeleteSuccess: () => void;
 }
 
-const UserDetails: React.FC<UserDetailsProps> = ({ selectedUser }) => {
+const UserDetails: React.FC<UserDetailsProps> = ({ selectedUser, onDeleteSuccess }) => {
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+    const handleDeleteSuccess = () => {
+        // Show success
+        setSnackbarOpen(true);
+    };
+
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+        
+        // Update user list in the parent component
+        onDeleteSuccess();
+    };
+
     return (
         <Box className="detail-container">
             <Box className="detail-of-users">
@@ -134,9 +150,14 @@ const UserDetails: React.FC<UserDetailsProps> = ({ selectedUser }) => {
                     </Grid>
                 </Grid>
                 <Box className="container-button">
-                    <DeleteConfirmation />
+                    <DeleteConfirmation userId={selectedUser.id} onDeleteSuccess={handleDeleteSuccess} />
                 </Box>
             </Box>
+            <CustomSnackbar
+                open={snackbarOpen}
+                message="User deleted successfully!"
+                onClose={handleCloseSnackbar}
+            />
         </Box>
     );
 };

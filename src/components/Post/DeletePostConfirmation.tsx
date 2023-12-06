@@ -9,9 +9,22 @@ import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import bin from '../../icon/icon.png';
 import '../Common/DeleteConfirmation.css';
+import { fetchApi } from '../../utils/apiUtils';
+import CustomSnackbar from '../Common/CustomSnackbar';
 
-const DeletePostConfirmation: React.FC = () => {
+interface DeleteConfirmationProps {
+  postId: number;
+  onDeleteSuccess: () => void;
+}
+
+const DeletePostConfirmation: React.FC<DeleteConfirmationProps> = ({ postId, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+    onDeleteSuccess();
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -19,6 +32,18 @@ const DeletePostConfirmation: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
+    onDeleteSuccess();
+  };
+
+  const handleDelete = async () => {
+    try {
+      await fetchApi(`/posts/${postId}`, 'delete');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    } finally {
+      handleClose();
+    }
   };
 
   return (
@@ -54,10 +79,15 @@ const DeletePostConfirmation: React.FC = () => {
           <Button className="delete-cancel" autoFocus onClick={handleClose}>
             Cancel
           </Button>
-          <Button className="delete-confirm" autoFocus onClick={handleClose}>
+          <Button className="delete-confirm" autoFocus onClick={handleDelete}>
             Yes, I'm sure
           </Button>
         </DialogActions>
+        <CustomSnackbar
+          open={snackbarOpen}
+          message="Post deleted successfully!"
+          onClose={handleCloseSnackbar}
+        />
       </Dialog>
     </React.Fragment>
   );

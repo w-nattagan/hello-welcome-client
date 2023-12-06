@@ -8,9 +8,15 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import bin from '../../icon/icon.png';
-import './DeleteConfirmation.css';
+import '../Common/DeleteConfirmation.css';
+import { fetchApi } from '../../utils/apiUtils';
 
-const DeleteConfirmation: React.FC = () => {
+interface DeleteConfirmationProps {
+  userId: number; 
+  onDeleteSuccess: () => void;
+}
+
+const DeleteConfirmation: React.FC<DeleteConfirmationProps> = ({ userId, onDeleteSuccess }) => {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -21,23 +27,24 @@ const DeleteConfirmation: React.FC = () => {
     setOpen(false);
   };
 
+  const handleDelete = async () => {
+    try {
+      await fetchApi(`/users/${userId}`, 'delete');
+      onDeleteSuccess();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    } finally {
+      handleClose();
+    }
+  };
+
   return (
     <React.Fragment>
       <Button id="delete-user-button" onClick={handleClickOpen}>
-        {' '}
-        <img
-          src={bin}
-          alt="Bin"
-          style={{ maxWidth: '100%', height: 'auto' }}
-        />
+        <img src={bin} alt="Bin" style={{ maxWidth: '100%', height: 'auto' }} />
         Delete User
       </Button>
-      <Dialog
-        onClose={handleClose}
-        aria-labelledby="title"
-        open={open}
-        maxWidth="lg"
-      >
+      <Dialog onClose={handleClose} aria-labelledby="title" open={open} maxWidth="lg">
         <DialogTitle> Delete Confirmation</DialogTitle>
         <IconButton
           aria-label="close"
@@ -53,15 +60,13 @@ const DeleteConfirmation: React.FC = () => {
         </IconButton>
 
         <DialogContent>
-          <Typography className="text-box">
-            Are you sure to delete this user ?
-          </Typography>
+          <Typography className="text-box">Are you sure to delete this user?</Typography>
         </DialogContent>
         <DialogActions className="button-reject">
           <Button className="delete-cancel" autoFocus onClick={handleClose}>
             Cancel
           </Button>
-          <Button className="delete-confirm" autoFocus onClick={handleClose}>
+          <Button className="delete-confirm" autoFocus onClick={handleDelete}>
             Yes, I'm sure
           </Button>
         </DialogActions>

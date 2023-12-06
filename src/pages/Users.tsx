@@ -14,7 +14,8 @@ const UsersList: React.FC = () => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const users: User[] = await fetchApi('/users');
+        const response = await fetchApi<User[]>('/users', 'get');
+        const users = response.data;
         setUserData(users);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -28,6 +29,27 @@ const UsersList: React.FC = () => {
     setSelectedUser(user);
   };
 
+  const handleDeleteSuccess = () => {
+    // Update user list
+    const updatedUsers = userData.filter(user => user.id !== selectedUser?.id);
+    setUserData(updatedUsers);
+    // Clear the selected user
+    setSelectedUser(null);
+  };
+
+  const handleCreateSuccess = async () => {
+    try {
+      // Fetch users data again
+      const response = await fetchApi<User[]>('/users', 'get');
+      const updatedUsers = response.data;
+  
+      // Update user list
+      setUserData(updatedUsers);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+
   return (
     <Box className="container">
       <Box className="second-container">
@@ -35,7 +57,7 @@ const UsersList: React.FC = () => {
           <Box className="list-of-users">
             <Box className="head-list">
               <Typography>List of users</Typography>
-              <CreateUserModal />
+              <CreateUserModal onSuccess={handleCreateSuccess} />
             </Box>
             <UserTable
               columns={[
@@ -49,7 +71,11 @@ const UsersList: React.FC = () => {
           </Box>
         </Box>
         {/* USER DETAILS */}
-        {selectedUser && <UserDetails selectedUser={selectedUser} />}
+        {selectedUser &&
+          (<UserDetails
+            selectedUser={selectedUser}
+            onDeleteSuccess={handleDeleteSuccess} />)
+        }
       </Box>
     </Box>
   );

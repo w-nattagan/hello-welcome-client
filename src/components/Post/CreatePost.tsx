@@ -10,9 +10,18 @@ import Typography from '@mui/material/Typography';
 import { Box, TextField } from '@mui/material';
 import "../Common/CreateModal.css";
 import createPost from '../../icon/CreatePost.png';
+import { fetchApi } from '../../utils/apiUtils';
+import CustomSnackbar from '../Common/CustomSnackbar';
+interface CreateModalProps {
+  onSuccess: () => void;
+}
 
-const CreatePost: React.FC = () => {
+const CreatePost: React.FC<CreateModalProps> = ({ onSuccess }) => {
   const [open, setOpen] = useState(false);
+  const [postTitle, setPostTitle] = useState('');
+  const [postContent, setPostContent] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -20,6 +29,48 @@ const CreatePost: React.FC = () => {
 
   const handleClose = () => {
     setOpen(false);
+    onSuccess();
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    if (name === 'title') {
+      setPostTitle(value);
+    } else if (name === 'content') {
+      setPostContent(value);
+    }
+  };
+
+  const handleCreatePost = async () => {
+    try {
+      const postData = {
+        title: postTitle,
+        body: postContent,
+        userId: 1,
+      };
+
+      const response: any = await fetchApi("/posts", "post", postData);
+
+      if (response.status === 201) {
+        setSnackbarOpen(true);
+      } else {
+        // Extract and display the error details
+        const errorDetails = response.data.errors || [];
+        setErrorMessage(`Failed to create post. Error details: ${JSON.stringify(errorDetails)}`);
+      }
+    } catch (error) {
+      setErrorMessage(`Error creating post: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+    handleClose();
+  };
+
+  const handleCloseErrorSnackbar = () => {
+    setErrorMessage("");
   };
 
   return (
@@ -57,10 +108,12 @@ const CreatePost: React.FC = () => {
             <Box>
               <Typography>Title</Typography>
               <TextField
-                className="text-field-one "
+                className="text-field-one"
                 label="Title"
-                id="outlined-basic"
+                id="title"
+                name="title"
                 variant="outlined"
+                onChange={handleInputChange}
               />
             </Box>
           </Box>
@@ -68,19 +121,33 @@ const CreatePost: React.FC = () => {
             <Box>
               <Typography>Content</Typography>
               <TextField
-                className="text-field-one "
+                className=""
                 label="Content"
-                id="outlined-basic"
+                id="content"
+                name="content"
                 variant="outlined"
+                multiline
+                rows={4}
+                onChange={handleInputChange}
               />
             </Box>
           </Box>
         </DialogContent>
         <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button className="submit-button" autoFocus onClick={handleClose}>
+          <Button className="submit-button" autoFocus onClick={handleCreatePost}>
             Submit
           </Button>
         </DialogActions>
+        <CustomSnackbar
+          open={snackbarOpen}
+          message="Post created successfully!"
+          onClose={handleCloseSnackbar}
+        />
+        <CustomSnackbar
+          open={!!errorMessage}
+          onClose={handleCloseErrorSnackbar}
+          message={errorMessage || ''}
+        />
       </Dialog>
     </React.Fragment>
   );

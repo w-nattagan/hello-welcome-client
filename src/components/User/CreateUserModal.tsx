@@ -11,13 +11,16 @@ import { Box, TextField } from "@mui/material";
 import createUser from "../../icon/Vector.png";
 import "../Common/CreateModal.css";
 import { fetchApi } from "../../utils/apiUtils";
+import CustomSnackbar from "../Common/CustomSnackbar";
 
 interface CreateUserModalProps {
-  // Add any necessary props
+  onSuccess: () => void;
 }
 
-const CreateUserModal: React.FC<CreateUserModalProps> = () => {
+const CreateUserModal: React.FC<CreateUserModalProps> = ({ onSuccess }) => {
   const [open, setOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const [formData, setFormData] = useState({
     name: "",
@@ -48,6 +51,21 @@ const CreateUserModal: React.FC<CreateUserModalProps> = () => {
 
   const handleClose = () => {
     setOpen(false);
+    onSuccess();
+  };
+
+  const handleSuccess = () => {
+    // Show success
+    setSnackbarOpen(true);
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
+    handleClose();
+  };
+
+  const handleCloseErrorSnackbar = () => {
+    setErrorMessage("");
   };
 
   const handleInputChange = (
@@ -62,15 +80,17 @@ const CreateUserModal: React.FC<CreateUserModalProps> = () => {
 
   const handleSubmit = async () => {
     try {
-      const response: any = await fetchApi("/api/users", "post", formData);
+      const response: any = await fetchApi("/users", "post", formData);
 
       if (response.status === 201) {
-        handleClose();
+        handleSuccess();
       } else {
-        console.error("Failed to create user");
+        // Extract and display the error details
+        const errorDetails = response.data.errors || [];
+        setErrorMessage(`Failed to create user. Error details: ${JSON.stringify(errorDetails)}`);
       }
     } catch (error) {
-      console.error("Error creating user:", error);
+      setErrorMessage(`Error creating user: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
@@ -194,7 +214,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = () => {
           </Box>
           <Box className="box-input">
             <Box>
-              <Typography>City</Typography>
               <TextField
                 className="text-field-one "
                 label="City"
@@ -209,7 +228,6 @@ const CreateUserModal: React.FC<CreateUserModalProps> = () => {
               />
             </Box>
             <Box>
-              <Typography>Zip code</Typography>
               <TextField
                 className="text-field-two"
                 label="Zip code"
@@ -276,6 +294,16 @@ const CreateUserModal: React.FC<CreateUserModalProps> = () => {
             Submit
           </Button>
         </DialogActions>
+        <CustomSnackbar
+          open={snackbarOpen}
+          message="User created successfully!"
+          onClose={handleCloseSnackbar}
+        />
+        <CustomSnackbar
+          open={!!errorMessage}
+          onClose={handleCloseErrorSnackbar}
+          message={errorMessage || ''}
+        />
       </Dialog>
     </React.Fragment>
   );
